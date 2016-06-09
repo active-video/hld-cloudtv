@@ -2,24 +2,43 @@ html, body{
     margin: 0;
     padding: 0;
 }
-
-video{
+.res, video {
     position: absolute;
 }
-
-.overlay {
-    top: 600px;
-    left: 100px;
-    width: 1080px;
-    height: 60px;
+.sd, .sd video {
+    width: 640px;
+    height: 480px;
 }
-.overlay:before{
-    /*Progress Bar*/
-    content: "";
-    background-color: rgba(0,200,200,0.6);
+.hd, .hd video {
+    width: 1280px;
+    height: 720px;
+}
+.superhd, .superhd video {
+    width: 1920px;
+    height: 1080px;
+}
+
+.progress{
+    display: none;
+    width: 90%;
+    height: 3%;
+    position: absolute;
+    left: 5%;
+    top: 90%;
+    z-index: 1;
+    overflow: hidden;
+}
+.progress>div{
     width: 100%;
     height: 100%;
-    position: absolute;
+    background-color: rgba(0,200, 125, 0.7);
+    -webkit-transition: -webkit-transform 0.5s linear, transform 0.5s linear;
     -webkit-transform: scaleX(0);
-    -webkit-transition: -webkit-transform linear 200ms;
+    -webkit-transform-origin: 0 0;
+}
+.progress.hide>div{
+    display: inline-block;
+}
+.progress.show>div,.progress.show{
+    display: inline-block;
 }

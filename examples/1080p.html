@@ -2,9 +2,15 @@
 <head>
     <link rel="stylesheet" href="styles.css" />
     <script src="../node_modules/hls.js/dist/hls.js"></script>
+    <script src="progress.js"></script>
 </head>
-<body>
-    <video autoplay loop style="width: 1920px; height: 1080px;"></video>
+<body class="res superhd">
+
+    <video autoplay loop></video>
+    <div class="progress">
+        <div><span></span></div>
+    </div>
+
 </body>
 
 
@@ -15,7 +21,7 @@
             maxMaxBufferLength: 20
         },
         hls = new Hls(config),
-        url = 'http://www.amgapps.com/videos/hls/1080p/m3u8s/278629 .m3u8';
+        url = 'http://www.amgapps.com/videos/hls/1080p/m3u8s/278629.m3u8';
 
     hls.loadSource(url);
     hls.attachMedia(document.querySelector('video'));

@@ -1,0 +1,23 @@
+<html>
+<head>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="../node_modules/hls.js/dist/hls.js"></script>
+</head>
+<body>
+    <video autoplay loop style="width: 640px; height: 480px;"></video>
+</body>
+
+
+<script>
+    var config={
+            enableWorker: false,
+            capLevelToPlayerSize: true,
+            maxMaxBufferLength: 40
+        },
+        hls = new Hls(config),
+        url = 'http://www.amgapps.com/videos/hls/480p/m3u8s/278749.m3u8';
+
+    hls.loadSource(url);
+    hls.attachMedia(document.querySelector('video'));
+</script>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+        }
+        video{
+            position: absolute;
+            width:1280px;
+            height:720px;
+            background:black;
+        }
+    </style>
+</head>
+<body>
+<video id="video" controls autoplay></video>
+
+<script>
+    var urls = ["http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-init.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4183338.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4185340.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4187342.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4189344.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4191346.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4193348.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4195350.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4197352.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4199354.mp4"],
+        requests = new Array(urls.length),
+        mime = "video/mp4; codecs=\"avc1.64001F\"",
+        loaded = 0,
+        updated = 0,
+        request, buffer;
+
+    for(var i=0; i < urls.length; i++) {
+        request = new XMLHttpRequest();
+        request.url = urls[i];
+        request.open('get', urls[i], true);
+        request.responseType = 'arraybuffer';
+        request.addEventListener('load', onLoaded);
+        request.send();
+        requests[i] = request;
+    }
+
+    function onLoaded(evt){
+        evt.target.removeEventListener('loaded', onLoaded);
+        loaded++;
+        if(loaded >= urls.length) {
+            start();
+        }
+    }
+
+    function start(){
+        if(buffer) {
+            buffer.addEventListener('updateend', addToBuffer);
+            addToBuffer();
+        } else {
+            setTimeout(start, 30);
+        }
+
+    }
+
+    function addToBuffer(){
+        var request = requests[updated],
+            data = request && new Uint8Array(request.response);
+
+        if(!data) {
+            console.log("Updated " + updated + " buffers, nothing left to do");
+            return;
+        } else {
+            console.log("Appending " + updated + " to buffer: " + request.url);
+        }
+
+
+
+        if(buffer.appendBuffer) {
+            buffer.appendBuffer(data);
+        } else {
+            buffer.append(data);
+        }
+        if(video.buffered.length && video.paused) {
+            video.currentTime = 4183338/1000;
+            video.play();
+        }
+        updated++;
+
+//        if (video.paused && video.buffered.length) {
+//            video.currentTime = video.buffered.start(0);
+//            video.play();
+//        }
+    }
+
+    function onSourceOpen() {
+        if (ms.sourceBuffers.length) {
+            return;
+        }
+        buffer = ms.addSourceBuffer(mime);
+        console.log("buffer.readyState=" + buffer.readyState);
+        //buffer.timestampOffset = 4183357/1000;
+    };
+
+    // unprefix mediasource
+    if (window.WebKitMediaSource !== undefined) {
+        window.MediaSource = window.WebKitMediaSource;
+    }
+    var ms = new MediaSource();
+    ms.addEventListener("sourceopen", onSourceOpen);
+    ms.addEventListener("webkitsourceopen", onSourceOpen);
+
+    // attach to video element
+    var video = document.querySelector("video");
+    video.src =  window.URL.createObjectURL(ms);
+    video.addEventListener("error", function onError(e) {
+        console.log(e.target.error);
+    });
+
+
+</script>
+
+</body>
+</html>

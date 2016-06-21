@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+        }
+        video{
+            position: absolute;
+            width:1280px;
+            height:720px;
+            background:black;
+        }
+    </style>
+</head>
+<body>
+<video id="video" controls autoplay></video>
+
+<script>
+    var urls = ["chunks/QA-TEST2-MP4-video=3507200-init.mp4", "chunks/QA-TEST2-MP4-video=3507200-4183338.mp4", "chunks/QA-TEST2-MP4-video=3507200-4185340.mp4", "chunks/QA-TEST2-MP4-video=3507200-4187342.mp4", "chunks/QA-TEST2-MP4-video=3507200-4189344.mp4", "chunks/QA-TEST2-MP4-video=3507200-4191346.mp4", "chunks/QA-TEST2-MP4-video=3507200-4193348.mp4", "chunks/QA-TEST2-MP4-video=3507200-4195350.mp4", "chunks/QA-TEST2-MP4-video=3507200-4197352.mp4", "chunks/QA-TEST2-MP4-video=3507200-4199354.mp4"],
+        requests = new Array(urls.length),
+        mime = "video/mp4; codecs=\"avc1.64001F\"",
+        loaded = 0,
+        updated = 0,
+        request, buffer;
+
+    for(var i=0; i < urls.length; i++) {
+        request = new XMLHttpRequest();
+        request.url = urls[i];
+        request.open('get', urls[i], true);
+        request.responseType = 'arraybuffer';
+        request.addEventListener('load', onLoaded);
+        request.send();
+        requests[i] = request;
+    }
+
+    function onLoaded(evt){
+        evt.target.removeEventListener('loaded', onLoaded);
+        loaded++;
+        if(loaded >= urls.length) {
+            start();
+        }
+    }
+
+    function start(){
+        if(buffer) {
+            buffer.addEventListener('updateend', addToBuffer);
+            addToBuffer();
+        } else {
+            setTimeout(start, 30);
+        }
+
+    }
+
+    function addToBuffer(){
+        var request = requests[updated],
+            data = request && new Uint8Array(request.response);
+
+        if(!data) {
+            console.log("Updated " + updated + " buffers, nothing left to do");
+
+            //capture a screenshot
+            setTimeout(captureCanvas, 2000);
+
+            return;
+        } else {
+            console.log("Appending " + updated + " to buffer: " + request.url);
+        }
+
+
+
+        if(buffer.appendBuffer) {
+            buffer.appendBuffer(data);
+        } else {
+            buffer.append(data);
+        }
+        if(video.buffered.length && video.paused) {
+            video.currentTime = 4183338/1000;
+            video.play();
+        }
+        updated++;
+
+//        if (video.paused && video.buffered.length) {
+//            video.currentTime = video.buffered.start(0);
+//            video.play();
+//        }
+    }
+
+    function onSourceOpen() {
+        if (ms.sourceBuffers.length) {
+            return;
+        }
+        buffer = ms.addSourceBuffer(mime);
+        console.log("buffer.readyState=" + buffer.readyState);
+        //buffer.timestampOffset = 4183357/1000;
+    }
+
+    function captureCanvas(){
+        var context = canvas.getContext('2d');
+
+
+
+        screenshot.setAttribute('width', 1280);
+        screenshot.setAttribute('height', 720);
+
+        canvas.setAttribute('width', 1280);
+        canvas.setAttribute('height', 720);
+
+        context.drawImage(video, 0, 0, 1280, 720);
+
+        var data = canvas.toDataURL('image/png');
+        screenshot.setAttribute('src', data);
+
+        setTimeout(showCanvas, 2000);
+
+    }
+
+    function mergeBufferInto(buffer1, buffer2) {
+        var tmp = new Uint8Array(buffer1.byteLength + buffer2.byteLength);
+        tmp.set(new Uint8Array(buffer1), 0);
+        tmp.set(new Uint8Array(buffer2), buffer1.byteLength);
+        return tmp.buffer;
+    };
+
+    function showCanvas(){
+        video.pause();
+        video.style.display = 'none';
+//        document.body.appendChild(screenshot);
+        document.body.appendChild(canvas);
+    }
+
+    // unprefix mediasource
+    if (window.WebKitMediaSource !== undefined) {
+        window.MediaSource = window.WebKitMediaSource;
+    }
+    var ms = new MediaSource();
+    ms.addEventListener("sourceopen", onSourceOpen);
+    ms.addEventListener("webkitsourceopen", onSourceOpen);
+
+    // attach to video element
+    var video = document.querySelector("video");
+    video.setAttribute('crossOrigin','anonymous');
+    video.src =  window.URL.createObjectURL(ms);
+    video.addEventListener("error", function onError(e) {
+        console.log(e.target.error);
+    });
+
+    var screenshot = document.createElement('img');
+    var canvas = document.createElement('canvas');
+    canvas.setAttribute('crossOrigin','Anonymous');
+
+    var fullBuffer = new Int8Array([]);
+
+
+</script>
+
+</body>
+</html>

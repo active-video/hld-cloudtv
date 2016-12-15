@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+        }
+        video,canvas{
+            position: absolute;
+            width:1280px;
+            height:720px;
+            background:black;
+        }
+    </style>
+
+
+    <script type="text/javascript" src="../node_modules/broadway-player/Player/Decoder.js"></script>
+    <script type="text/javascript" src="../node_modules/broadway-player/Player/YUVCanvas.js"></script>
+    <script type="text/javascript" src="../node_modules/broadway-player/Player/Player.js"></script>
+    <script type="text/javascript" src="../node_modules/broadway-player/Player/mp4.js"></script>
+
+    <script>
+
+        'use strict';
+
+        var Stream = (function stream() {
+            function constructor(url) {
+                this.url = url;
+            }
+
+            constructor.prototype = {
+                readAll: function(progress, complete) {
+                    setTimeout(function(){
+                       complete(buffer)
+                    });
+                }
+            };
+            return constructor;
+        })();
+
+
+
+
+        var urls = ["chunks/QA-TEST2-MP4-video=3507200-init.mp4", "chunks/QA-TEST2-MP4-video=3507200-4183338.mp4"],
+            //    urls = ['../node_modules/broadway-player/Player/tree.mp4'],
+
+                requests = new Array(urls.length),
+                loaded = 0,
+                updated = 0,
+                player,
+                canvas,
+                buffer,
+                request;
+
+
+        for(var i=0; i < urls.length; i++) {
+            request = new XMLHttpRequest();
+            request.url = urls[i];
+            request.open('get', urls[i], true);
+            request.responseType = 'arraybuffer';
+            request.addEventListener('load', onLoaded);
+            request.send();
+            requests[i] = request;
+        }
+
+        function onLoaded(evt){
+            evt.target.removeEventListener('loaded', onLoaded);
+            loaded++;
+            if(loaded >= urls.length) {
+                drawCanvas();
+            }
+        }
+
+        function drawCanvas() {
+            buffer = requestsToSingleBuffer(requests);
+
+            //new MP4Player(new Stream(src), useWorkers, webgl, render);
+            player = new MP4Player(new Stream(), false, false, true);
+            canvas = player.canvas;
+
+            document.body.appendChild(canvas);
+
+            player.play();
+        }
+
+        function requestsToSingleBuffer(requests){
+            var buffer = requests[0].response;
+            for(var i=1; i<requests.length; i++) {
+                buffer = appendBuffer(buffer, requests[i].response);
+            }
+
+            return buffer;
+        }
+
+        var appendBuffer = function(buffer1, buffer2) {
+            var tmp = new Uint8Array(buffer1.byteLength + buffer2.byteLength);
+            tmp.set(new Uint8Array(buffer1), 0);
+            tmp.set(new Uint8Array(buffer2), buffer1.byteLength);
+            return tmp.buffer;
+        };
+
+
+    </script>
+</head>
+<body>
+
+
+
+</body>
+</html>
+
+

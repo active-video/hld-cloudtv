@@ -18,12 +18,20 @@
 <video id="video" controls autoplay></video>
 
 <script>
-    var urls = ["http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-init.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4183338.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4185340.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4187342.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4189344.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4191346.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4193348.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4195350.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4197352.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4199354.mp4"],
-        requests = new Array(urls.length),
+    var loaded = 0,
+
+        //audio only
+
+
+        //video only
         mime = "video/mp4; codecs=\"avc1.64001F\"",
-        loaded = 0,
+        urls = ["http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-init.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4183338.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4185340.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4187342.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4189344.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4191346.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4193348.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4195350.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4197352.mp4", "http://100.34.244.131/vod/PP1/QA-TEST2-MP4/_/QA193-dash/QA-TEST2-MP4-video=3507200-4199354.mp4"],
+
+        requests = new Array(urls.length),
+
         updated = 0,
         request, buffer;
+
 
     for(var i=0; i < urls.length; i++) {
         request = new XMLHttpRequest();

@@ -1,0 +1,77 @@
+<html>
+<head>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="../node_modules/hls.js/dist/hls.js"></script>
+</head>
+<body class="res hd black">
+
+    <video autoplay loop></video>
+    <div class="progress">
+        <div><span></span></div>
+    </div>
+
+</body>
+
+
+<script>
+    var currentTime = 0,
+        lastUpdate = 0,
+        lastUpdateString = null,
+        video = document.querySelector('video'),
+        //setter = Object.getPropertyDescriptor(video, 'currentTime');
+        setter = HTMLVideoElement.prototype.__lookupSetter__('currentTime');
+
+//    Object.defineProperty(video, 'currentTime', {
+//        get: function(){
+//            var timePassed = lastUpdate ? (Date.now() - lastUpdate)/1000 : 0;
+//            return currentTime + timePassed;
+//        },
+//
+//        set: function(val){
+//            lastUpdate = Date.now();
+//            lastUpdateString = new Date(lastUpdate).toString();
+//            currentTime = val;
+//
+//            setter.call(this, currentTime);
+//
+//            this.currentTime = val;
+//        }
+//    });
+
+
+    if(location.hash.length < 1) {
+        var error = "To play an HLS stream, append it to the URL as after the '#', for example, 720p-live.html#http://someHlsServer/test.m3u8";
+        console.error(error);
+        document.write('<h1>' + error + '</h1>');
+    } else {
+        var config={
+                    enableWorker: false,
+                    debug: true,
+                    capLevelToPlayerSize: true,
+                    maxMaxBufferLength: 60,
+                    maxSeekHole: 30,
+
+                    maxFragLookUpTolerance: 3,
+
+//                    liveSyncDuration: 3,
+//                    liveMaxLatencyDuration: 40,
+
+                    //abrEwmaDefaultEstimate: 15000000
+                },
+                hls = new Hls(config),
+                //caLosAngeles
+                url = decodeURIComponent(location.hash.substr(1));
+
+        //hls.startLevel = 4;
+        hls.loadSource(url);
+        hls.attachMedia(document.querySelector('video'));
+
+        setInterval(function(){
+            console.log("Current Time: " + video.currentTime);
+        }, 1000);
+    }
+
+
+
+</script>
+</html>

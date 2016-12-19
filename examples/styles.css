@@ -2,6 +2,10 @@ html, body{
     margin: 0;
     padding: 0;
 }
+.black {
+    background-color: black;
+    color: #FFF;
+}
 .res, video {
     position: absolute;
 }

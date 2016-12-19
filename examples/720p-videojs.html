@@ -1,0 +1,25 @@
+<html>
+<head>
+    <link href="//vjs.zencdn.net/5.10/video-js.css" rel="stylesheet">
+    <script src="https://cdn.rawgit.com/timdream/simworker/master/worker.js"></script>
+    <script src="//vjs.zencdn.net/5.10/video.js"></script>
+    <script src="//npmcdn.com/videojs-contrib-hls@%5E3.0.0/dist/videojs-contrib-hls.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="res hd black">
+
+    <video class="video-js" width="1280" height="720" autoplay data-setup='{}'>
+        <source type="application/x-mpegURL">
+
+    </video>
+
+
+<script>
+    videojs.Hls.supportsNativeHls = false;
+    var player = videojs(document.querySelector('video'));
+    console.log("User agent: " + navigator.userAgent);
+    console.log('videojs.Hls.supportsNativeHls=' + videojs.Hls.supportsNativeHls);
+
+</script>
+</body>
+</html>
